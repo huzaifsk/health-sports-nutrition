@@ -10,9 +10,30 @@ import type {
 let nextId = 1000;
 const id = () => nextId++;
 
-function image(seed: string): ProductImage {
-  return { id: id(), src: `https://picsum.photos/seed/${seed}/1000/1000`, alt: seed };
+/**
+ * Unsplash-hosted stock photography (Unsplash License — free to use, no
+ * attribution required). PeakProtein has no real product photography yet,
+ * so these stand in as topically-accurate placeholders until real shots
+ * exist. Picking a single representative photo per product/category keeps
+ * the storefront visually coherent instead of unrelated random imagery.
+ */
+function photo(photoId: string, alt: string): ProductImage {
+  return {
+    id: id(),
+    src: `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1200&q=80`,
+    alt,
+  };
 }
+
+const PHOTOS = {
+  wheyGold: "photo-1774793476310-fd7d843184c5",
+  wheyRaw: "photo-1704650312191-005ab02786f5",
+  isolate: "photo-1704650311190-7eeb9c4f6e11",
+  plant: "photo-1693996045899-7cf0ac0229c7",
+  creatine: "photo-1693996045435-af7c48b9cafb",
+  massGainer: "photo-1704650311298-4d6915d34c64",
+  preWorkout: "photo-1693996046744-d7d7434bc777",
+} as const;
 
 interface SizeOption {
   label: string;
@@ -51,7 +72,7 @@ function buildVariations({
         stockStatus: "instock",
         stockQuantity: Math.floor(Math.random() * 60) + 10,
         weightGrams: size.weightGrams,
-        image: image(`${slugPrefix}-${flavor}`),
+        image: null,
         attributes: { Flavor: flavor, Size: size.label },
       });
     }
@@ -122,7 +143,7 @@ const categories: Category[] = [
     slug: "whey-protein",
     name: "Whey Protein",
     description: "Fast-absorbing whey protein concentrate blends for everyday recovery.",
-    image: "https://picsum.photos/seed/cat-whey/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.wheyGold}?auto=format&fit=crop&w=800&q=80`,
     productCount: 2,
   },
   {
@@ -130,7 +151,7 @@ const categories: Category[] = [
     slug: "protein-isolate",
     name: "Protein Isolate",
     description: "Ultra-filtered, low-carb, low-fat isolate for lean muscle support.",
-    image: "https://picsum.photos/seed/cat-isolate/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.isolate}?auto=format&fit=crop&w=800&q=80`,
     productCount: 1,
   },
   {
@@ -138,7 +159,7 @@ const categories: Category[] = [
     slug: "plant-protein",
     name: "Plant Protein",
     description: "100% vegan pea + rice protein blends, dairy-free.",
-    image: "https://picsum.photos/seed/cat-plant/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.plant}?auto=format&fit=crop&w=800&q=80`,
     productCount: 1,
   },
   {
@@ -146,7 +167,7 @@ const categories: Category[] = [
     slug: "creatine",
     name: "Creatine",
     description: "Micronized creatine monohydrate for strength and power output.",
-    image: "https://picsum.photos/seed/cat-creatine/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.creatine}?auto=format&fit=crop&w=800&q=80`,
     productCount: 1,
   },
   {
@@ -154,7 +175,7 @@ const categories: Category[] = [
     slug: "mass-gainer",
     name: "Mass Gainer",
     description: "High-calorie blends for clean, consistent weight gain.",
-    image: "https://picsum.photos/seed/cat-mass/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.massGainer}?auto=format&fit=crop&w=800&q=80`,
     productCount: 1,
   },
   {
@@ -162,7 +183,7 @@ const categories: Category[] = [
     slug: "pre-workout",
     name: "Pre-Workout",
     description: "Focus and energy formulas dosed for training days.",
-    image: "https://picsum.photos/seed/cat-pre/800/600",
+    image: `https://images.unsplash.com/${PHOTOS.preWorkout}?auto=format&fit=crop&w=800&q=80`,
     productCount: 1,
   },
 ];
@@ -247,7 +268,7 @@ export const products: Product[] = [
     averageRating: 4.6,
     ratingCount: 812,
     categories: [{ id: categories[0]!.id, slug: "whey-protein", name: "Whey Protein" }],
-    images: [image("whey-gold-1"), image("whey-gold-2"), image("whey-gold-3")],
+    images: [photo(PHOTOS.wheyGold, "Gold Standard Whey Protein tub and shaker")],
     attributes: attributesFromVariations(wheyFlavors, ["1kg", "2kg"]),
     variations: wheyVariations,
     nutrition: wheyNutrition,
@@ -277,7 +298,7 @@ export const products: Product[] = [
     averageRating: 4.3,
     ratingCount: 156,
     categories: [{ id: categories[0]!.id, slug: "whey-protein", name: "Whey Protein" }],
-    images: [image("whey-raw-1"), image("whey-raw-2")],
+    images: [photo(PHOTOS.wheyRaw, "Raw Whey Protein powder and scoop")],
     attributes: [],
     variations: [],
     nutrition: { ...wheyNutrition, sugarGrams: 0, ingredients: "100% Whey Protein Concentrate.", allergens: ["Milk"] },
@@ -303,7 +324,7 @@ export const products: Product[] = [
     averageRating: 4.7,
     ratingCount: 431,
     categories: [{ id: categories[1]!.id, slug: "protein-isolate", name: "Protein Isolate" }],
-    images: [image("iso-peak-1"), image("iso-peak-2"), image("iso-peak-3")],
+    images: [photo(PHOTOS.isolate, "Peak Isolate Protein jar and scoop")],
     attributes: attributesFromVariations(isolateFlavors, ["1kg", "2kg"]),
     variations: isolateVariations,
     nutrition: isolateNutrition,
@@ -329,7 +350,7 @@ export const products: Product[] = [
     averageRating: 4.4,
     ratingCount: 268,
     categories: [{ id: categories[2]!.id, slug: "plant-protein", name: "Plant Protein" }],
-    images: [image("plant-pure-1"), image("plant-pure-2")],
+    images: [photo(PHOTOS.plant, "Pure Plant Protein jar and scoop")],
     attributes: attributesFromVariations(plantFlavors, ["1kg", "2kg"]),
     variations: plantVariations,
     nutrition: plantNutrition,
@@ -359,7 +380,7 @@ export const products: Product[] = [
     averageRating: 4.8,
     ratingCount: 1042,
     categories: [{ id: categories[3]!.id, slug: "creatine", name: "Creatine" }],
-    images: [image("creatine-1"), image("creatine-2")],
+    images: [photo(PHOTOS.creatine, "Micronized Creatine Monohydrate jar and scoop")],
     attributes: [],
     variations: [],
     nutrition: {
@@ -395,7 +416,7 @@ export const products: Product[] = [
     averageRating: 4.2,
     ratingCount: 189,
     categories: [{ id: categories[4]!.id, slug: "mass-gainer", name: "Mass Gainer" }],
-    images: [image("mass-bulk-1"), image("mass-bulk-2")],
+    images: [photo(PHOTOS.massGainer, "Clean Bulk Mass Gainer tub and scoop")],
     attributes: attributesFromVariations(massFlavors, ["3kg", "6kg"]),
     variations: massVariations,
     nutrition: massGainerNutrition,
@@ -425,7 +446,7 @@ export const products: Product[] = [
     averageRating: 4.5,
     ratingCount: 312,
     categories: [{ id: categories[5]!.id, slug: "pre-workout", name: "Pre-Workout" }],
-    images: [image("pre-ignite-1"), image("pre-ignite-2")],
+    images: [photo(PHOTOS.preWorkout, "Ignite Pre-Workout container and scoop")],
     attributes: [],
     variations: [],
     nutrition: {

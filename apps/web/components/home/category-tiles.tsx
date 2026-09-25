@@ -1,6 +1,6 @@
 import { categoryService } from "@repo/commerce";
-import Image from "next/image";
 import Link from "next/link";
+import { ProductVisual } from "@/components/product/product-visual";
 
 export async function CategoryTiles() {
   const categories = await categoryService.list();
@@ -15,17 +15,13 @@ export async function CategoryTiles() {
             href={`/products?category=${category.slug}`}
             className="group flex flex-col gap-2"
           >
-            <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
-              {category.image && (
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  sizes="(min-width: 1024px) 16vw, 33vw"
-                  className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-                />
-              )}
-            </div>
+            <ProductVisual
+              categorySlug={category.slug}
+              imageSrc={category.image}
+              imageAlt={category.name}
+              sizes="(min-width: 1024px) 16vw, 33vw"
+              className="aspect-square rounded-xl"
+            />
             <span className="text-center text-sm font-medium">{category.name}</span>
           </Link>
         ))}

@@ -24,9 +24,7 @@ export function PriceTag({
           <span className="text-sm text-muted-foreground line-through tabular-nums">
             {formatINR(regularPrice)}
           </span>
-          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            {percentOff}% off
-          </span>
+          <span className="text-xs font-medium text-success">{percentOff}% off</span>
         </>
       )}
     </div>

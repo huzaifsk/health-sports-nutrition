@@ -2,8 +2,8 @@
 
 import { formatINR } from "@repo/commerce";
 import { Minus, Plus, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { ProductVisual } from "@/components/product/product-visual";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cart-store";
 
@@ -25,13 +25,14 @@ export function CartLineItems() {
     <ul className="flex flex-col divide-y divide-border">
       {items.map((item) => (
         <li key={item.key} className="flex gap-3 py-4">
-          <Link
-            href={`/products/${item.slug}`}
-            className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted"
-          >
-            {item.image && (
-              <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
-            )}
+          <Link href={`/products/${item.slug}`} className="block shrink-0">
+            <ProductVisual
+              categorySlug={item.categorySlug ?? undefined}
+              imageSrc={item.image}
+              imageAlt={item.name}
+              sizes="64px"
+              className="size-16 rounded-lg"
+            />
           </Link>
           <div className="flex flex-1 flex-col gap-1">
             <div className="flex items-start justify-between gap-2">

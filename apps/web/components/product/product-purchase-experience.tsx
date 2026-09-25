@@ -5,7 +5,7 @@ import { Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { PriceTag } from "@/components/product/price-tag";
-import { ProductGallery } from "@/components/product/product-gallery";
+import { ProductVisual } from "@/components/product/product-visual";
 import { RatingStars } from "@/components/product/rating-stars";
 import { StockBadge } from "@/components/product/stock-badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,15 @@ export function ProductPurchaseExperience({ product }: { product: Product }) {
 
   return (
     <div className="grid gap-10 md:grid-cols-2">
-      <ProductGallery images={product.images} activeImage={selectedVariation?.image?.src ?? null} />
+      <ProductVisual
+        categorySlug={product.categories[0]?.slug}
+        imageSrc={product.images[0]?.src}
+        imageAlt={product.images[0]?.alt ?? product.name}
+        label={selectedVariation ? Object.values(selectedVariation.attributes).join(" / ") : undefined}
+        sizes="(min-width: 768px) 40vw, 90vw"
+        priority
+        className="aspect-square rounded-2xl"
+      />
 
       <div className="flex flex-col gap-4">
         <div>

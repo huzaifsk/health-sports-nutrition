@@ -44,9 +44,7 @@ export function CartSummary({ showCheckoutAction = true }: { showCheckoutAction?
           Add {formatINR(remainingForFreeShipping)} more for free shipping.
         </p>
       ) : (
-        <p className="text-xs text-emerald-600 dark:text-emerald-400">
-          You&apos;ve unlocked free shipping.
-        </p>
+        <p className="text-xs text-success">You&apos;ve unlocked free shipping.</p>
       )}
 
       <dl className="flex flex-col gap-1.5 text-sm">
