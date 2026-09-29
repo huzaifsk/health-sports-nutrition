@@ -1,5 +1,6 @@
 import type { Product } from "@repo/types";
 import { NutritionFactsTable } from "@/components/product/nutrition-facts";
+import { ReviewsSection } from "@/components/product/reviews-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ProductTabs({ product }: { product: Product }) {
@@ -9,6 +10,7 @@ export function ProductTabs({ product }: { product: Product }) {
         <TabsTrigger value="description">Description</TabsTrigger>
         {product.nutrition && <TabsTrigger value="nutrition">Nutrition</TabsTrigger>}
         <TabsTrigger value="usage">Usage</TabsTrigger>
+        <TabsTrigger value="reviews">Reviews</TabsTrigger>
       </TabsList>
       <TabsContent value="description" className="max-w-2xl pt-6 text-sm leading-relaxed text-muted-foreground">
         {product.description}
@@ -31,6 +33,9 @@ export function ProductTabs({ product }: { product: Product }) {
             <p>{product.storageInstructions}</p>
           </div>
         )}
+      </TabsContent>
+      <TabsContent value="reviews" className="pt-6">
+        <ReviewsSection productId={product.id} />
       </TabsContent>
     </Tabs>
   );

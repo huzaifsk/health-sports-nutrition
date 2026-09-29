@@ -5,27 +5,31 @@ import { PriceTag } from "@/components/product/price-tag";
 import { ProductVisual } from "@/components/product/product-visual";
 import { RatingStars } from "@/components/product/rating-stars";
 import { Button } from "@/components/ui/button";
+import { WishlistToggleButton } from "@/components/wishlist/wishlist-toggle-button";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group flex flex-col">
-      <Link
-        href={`/products/${product.slug}`}
-        className="relative mb-3 block aspect-square overflow-hidden rounded-xl"
-      >
-        <ProductVisual
-          categorySlug={product.categories[0]?.slug}
-          imageSrc={product.images[0]?.src}
-          imageAlt={product.images[0]?.alt ?? product.name}
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="size-full"
+      <div className="relative mb-3">
+        <Link href={`/products/${product.slug}`} className="block aspect-square overflow-hidden rounded-xl">
+          <ProductVisual
+            categorySlug={product.categories[0]?.slug}
+            imageSrc={product.images[0]?.src}
+            imageAlt={product.images[0]?.alt ?? product.name}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+            className="size-full"
+          />
+          {product.onSale && (
+            <span className="absolute top-2 left-2 rounded-full bg-brand px-2 py-0.5 text-xs font-medium text-brand-foreground">
+              Sale
+            </span>
+          )}
+        </Link>
+        <WishlistToggleButton
+          product={product}
+          className="absolute top-2 right-2 rounded-full border-none bg-background/90 backdrop-blur-sm"
         />
-        {product.onSale && (
-          <span className="absolute top-2 left-2 rounded-full bg-brand px-2 py-0.5 text-xs font-medium text-brand-foreground">
-            Sale
-          </span>
-        )}
-      </Link>
+      </div>
 
       <Link href={`/products/${product.slug}`} className="flex flex-col gap-1">
         <span className="text-xs text-muted-foreground">{product.categories[0]?.name}</span>

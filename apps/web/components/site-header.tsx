@@ -1,7 +1,10 @@
 import { categoryService } from "@repo/commerce";
+import { User } from "lucide-react";
 import Link from "next/link";
 import { CartButton } from "@/components/cart/cart-sheet";
 import { SearchForm } from "@/components/search-form";
+import { Button } from "@/components/ui/button";
+import { WishlistNavButton } from "@/components/wishlist/wishlist-nav-button";
 
 export async function SiteHeader() {
   const categories = await categoryService.list();
@@ -27,6 +30,10 @@ export async function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-1">
           <SearchForm className="hidden sm:block" />
+          <WishlistNavButton />
+          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/account" aria-label="Your account" />}>
+            <User />
+          </Button>
           <CartButton />
         </div>
       </div>

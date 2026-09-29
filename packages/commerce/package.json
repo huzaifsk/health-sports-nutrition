@@ -8,11 +8,15 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "@repo/types": "workspace:*",
     "@repo/woo-commerce": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.19.43"
+    "@types/node": "^20.19.43",
+    "vitest": "^5.0.2"
   }
 }

@@ -20,6 +20,7 @@ interface CartState {
   updateQuantity: (key: string, quantity: number) => void;
   removeItem: (key: string) => void;
   applyCoupon: (code: string | null) => void;
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -34,6 +35,7 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (key, quantity) => set({ cart: updateItemQuantity(get().cart, key, quantity) }),
       removeItem: (key) => set({ cart: removeItemFromCart(get().cart, key) }),
       applyCoupon: (code) => set({ cart: setCartCoupon(get().cart, code) }),
+      clearCart: () => set({ cart: createEmptyCart() }),
     }),
     {
       name: "peakprotein-cart",

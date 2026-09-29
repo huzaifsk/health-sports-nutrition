@@ -9,6 +9,7 @@ import { ProductVisual } from "@/components/product/product-visual";
 import { RatingStars } from "@/components/product/rating-stars";
 import { StockBadge } from "@/components/product/stock-badge";
 import { Button } from "@/components/ui/button";
+import { WishlistToggleButton } from "@/components/wishlist/wishlist-toggle-button";
 
 function findVariation(variations: ProductVariation[], selection: Record<string, string>) {
   return variations.find((variation) =>
@@ -53,9 +54,12 @@ export function ProductPurchaseExperience({ product }: { product: Product }) {
       />
 
       <div className="flex flex-col gap-4">
-        <div>
-          <span className="text-sm text-muted-foreground">{product.categories[0]?.name}</span>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">{product.name}</h1>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <span className="text-sm text-muted-foreground">{product.categories[0]?.name}</span>
+            <h1 className="font-heading text-2xl font-semibold tracking-tight">{product.name}</h1>
+          </div>
+          <WishlistToggleButton product={product} className="shrink-0 rounded-full" />
         </div>
         <RatingStars rating={product.averageRating} count={product.ratingCount} />
         <PriceTag price={price} regularPrice={regularPrice} size="lg" />
@@ -64,7 +68,7 @@ export function ProductPurchaseExperience({ product }: { product: Product }) {
 
         {isVariable &&
           product.attributes.map((attribute) => (
-            <div key={attribute.id}>
+            <div key={attribute.slug}>
               <h3 className="mb-2 text-sm font-medium">{attribute.name}</h3>
               <div className="flex flex-wrap gap-2">
                 {attribute.options.map((option) => {

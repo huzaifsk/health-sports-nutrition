@@ -1,8 +1,8 @@
 "use client";
 
 import { formatINR, FREE_SHIPPING_THRESHOLD } from "@repo/commerce";
+import Link from "next/link";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/lib/cart-store";
@@ -72,7 +72,8 @@ export function CartSummary({ showCheckoutAction = true }: { showCheckoutAction?
         <Button
           size="lg"
           className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
-          onClick={() => toast("Checkout is coming in the next phase of this build.")}
+          nativeButton={false}
+          render={<Link href="/checkout" />}
         >
           Proceed to Checkout
         </Button>
