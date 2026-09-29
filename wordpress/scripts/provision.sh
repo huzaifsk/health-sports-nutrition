@@ -44,5 +44,14 @@ $WP option update woocommerce_onboarding_profile '{"skipped":true}' --format=jso
 echo "==> Seeding product categories and catalog..."
 $WP eval-file /scripts/provision-products.php
 
+echo "==> Setting up shipping zones..."
+$WP eval-file /scripts/provision-shipping.php
+
+echo "==> Creating real coupons..."
+$WP eval-file /scripts/provision-coupons.php
+
+echo "==> Installing PeakProtein staff roles and demo accounts..."
+$WP eval-file /scripts/provision-roles.php
+
 echo "==> Generating a REST API key pair for the Next.js storefront..."
 $WP eval-file /scripts/provision-keys.php

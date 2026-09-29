@@ -17,8 +17,8 @@ describe("applyCoupon — FIRST20", () => {
     expect(applyCoupon(1000, "FIRST20")).toBe(200); // round(1000 * 0.2)
   });
 
-  it("caps the discount at ₹500", () => {
-    expect(applyCoupon(5000, "FIRST20")).toBe(500); // 20% would be 1000, capped to 500
+  it("applies a full uncapped 20% (matches the real WooCommerce coupon, which has no cap)", () => {
+    expect(applyCoupon(5000, "FIRST20")).toBe(1000);
   });
 
   it("applies at exactly the minimum order value (999)", () => {

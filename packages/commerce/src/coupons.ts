@@ -5,16 +5,23 @@ export interface Coupon {
   compute(subtotal: number): number;
 }
 
+// Mirrors the real WooCommerce coupons created by
+// wordpress/scripts/provision-coupons.php exactly (percent / minimum_amount)
+// — this is only a client-side preview for the cart page; WooCommerce
+// itself validates and applies the real coupon when the order is placed
+// (see apps/web/app/checkout/actions.ts), so drift here would show the
+// customer one discount in the cart and charge them a different one at
+// checkout.
 const COUPONS: Coupon[] = [
   {
     code: "FIRST20",
-    description: "20% off your first order (up to ₹500)",
+    description: "20% off your first order",
     minOrderValue: 999,
-    compute: (subtotal) => Math.min(Math.round(subtotal * 0.2), 500),
+    compute: (subtotal) => Math.round(subtotal * 0.2),
   },
   {
     code: "WELCOME10",
-    description: "Flat ₹200 off orders above ₹1500",
+    description: "Flat ₹200 off orders above ₹1,500",
     minOrderValue: 1500,
     compute: () => 200,
   },

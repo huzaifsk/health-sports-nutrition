@@ -31,6 +31,7 @@ services:
       WORDPRESS_DEBUG: 0
     volumes:
       - wp_data:/var/www/html
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
 
   wpcli:
     image: wordpress:cli-php8.3
@@ -39,6 +40,7 @@ services:
       - db
     volumes:
       - wp_data:/var/www/html
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./scripts:/scripts
     entrypoint: ["tail", "-f", "/dev/null"]
     environment:
@@ -47,6 +49,28 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
 
+  # Application-level database (PRD §3): analytics events, audit logs,
+  # notifications — data that belongs to PeakProtein itself, not to
+  # WooCommerce/WordPress.
+  app_db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: peakprotein
+      POSTGRES_USER: peakprotein
+      POSTGRES_PASSWORD: peakprotein
+    ports:
+      - "5432:5432"
+    volumes:
+      - app_db_data:/var/lib/postgresql/data
+      - ./app-db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peakprotein"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
 volumes:
   db_data:
   wp_data:
+  app_db_data:

@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createOrderFromCart, markOrderFailed, markOrderPaid, paymentProvider } from "@repo/commerce";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCartStore } from "@/lib/cart-store";
 import { useCustomerStore } from "@/lib/customer-store";
 import { useOrdersStore } from "@/lib/orders-store";
+import { placeOrderAction } from "@/app/checkout/actions";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -37,7 +37,6 @@ export function CheckoutForm() {
   const customerProfile = useCustomerStore((state) => state.profile);
   const setProfile = useCustomerStore((state) => state.setProfile);
   const addOrder = useOrdersStore((state) => state.addOrder);
-  const updateOrder = useOrdersStore((state) => state.updateOrder);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const savedAddress = customerProfile?.addresses[0];
@@ -86,31 +85,60 @@ export function CheckoutForm() {
       addresses: [shippingAddress],
     });
 
-    const order = createOrderFromCart(cart, {
+    const result = await placeOrderAction({
+      cart,
+      customerName: values.name,
+      customerEmail: values.email,
+      phone: values.phone,
+      address: { line1: values.line1, line2: values.line2 ?? "", city: values.city, state: values.state, pincode: values.pincode },
+      paymentMethod: values.paymentMethod,
+    });
+
+    if (!result.success) {
+      setIsSubmitting(false);
+      toast.error(result.error);
+      return;
+    }
+
+    // Real order now exists in WooCommerce (visible in wp-admin and the
+    // admin app) — mirror it locally too, using WooCommerce's own order
+    // number/id/total, for the account order-history view.
+    const now = new Date().toISOString();
+    addOrder({
+      id: String(result.orderId),
+      orderNumber: result.orderNumber,
       customerName: values.name,
       customerEmail: values.email,
       shippingAddress,
-      paymentMethod: values.paymentMethod,
-    });
-    addOrder(order);
-
-    const result = await paymentProvider.charge({
-      orderNumber: order.orderNumber,
-      amount: order.totals.total,
+      items: cart.items.map((item) => ({
+        productId: item.productId,
+        variationId: item.variationId,
+        slug: item.slug,
+        name: item.name,
+        image: item.image,
+        categorySlug: item.categorySlug,
+        sku: item.sku,
+        attributes: item.attributes,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
+      totals: { ...cart.totals, total: result.total },
       currency: "INR",
-      method: values.paymentMethod,
+      couponCode: cart.couponCode,
+      paymentMethod: values.paymentMethod,
+      paymentStatus: values.paymentMethod === "cod" ? "pending" : "paid",
+      paymentTransactionId: null,
+      orderStatus: "processing",
+      timeline: [
+        { status: "placed", timestamp: now },
+        { status: "processing", timestamp: now },
+      ],
+      createdAt: now,
     });
 
-    if (result.success) {
-      updateOrder(order.id, (current) => markOrderPaid(current, result.transactionId));
-      clearCart();
-      toast.success("Order placed successfully!");
-      router.push(`/orders/${order.orderNumber}`);
-    } else {
-      updateOrder(order.id, markOrderFailed);
-      setIsSubmitting(false);
-      toast.error(result.failureReason ?? "Payment failed. Please try again.");
-    }
+    clearCart();
+    toast.success("Order placed successfully!");
+    router.push(`/orders/${result.orderNumber}`);
   }
 
   return (
